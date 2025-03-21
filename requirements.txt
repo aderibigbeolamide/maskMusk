@@ -1,0 +1,8 @@
+Flask
+Flask-Cors
+faiss-cpu
+numpy
+sentence-transformers
+flasgger
+requests
+gunicorn
