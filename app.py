@@ -31,17 +31,30 @@ faiss_index = None
 embedding_dim = 384  # 'all-MiniLM-L6-v2' outputs 384-dim vectors
 
 # Load documentation passages from a JSON file
-def load_docs(file_path="docs.json"):
+def load_docs():
     global docs, doc_texts
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            docs = json.load(f)
-        doc_texts = [doc["text"] for doc in docs]
-        logger.info(f"Loaded {len(doc_texts)} documentation passages.")
-    except Exception as e:
-        logger.error(f"Error loading docs from {file_path}: {e}")
-        docs = []
-        doc_texts = []
+    docs = []
+    doc_texts = []
+
+    # Try different paths where docs.json might be located
+    possible_paths = [
+        "docs.json",  # Default location in the same directory
+        os.path.join(os.getcwd(), "docs.json"),  # Absolute path in working directory
+        "/opt/render/project/src/docs.json",  # Render deployment path
+    ]
+
+    for file_path in possible_paths:
+        if os.path.exists(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    docs = json.load(f)
+                doc_texts = [doc["text"] for doc in docs]
+                logger.info(f"✅ Loaded {len(doc_texts)} documentation passages from {file_path}.")
+                return  # Exit after successful load
+            except Exception as e:
+                logger.error(f"❌ Error loading docs from {file_path}: {e}")
+
+    logger.warning("⚠️ No documentation passages found. Make sure docs.json is available.")
 
 # Build FAISS index using SentenceTransformer embeddings
 def build_faiss_index():
