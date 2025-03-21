@@ -1,0 +1,114 @@
+[
+    {
+        "section": "Introduction",
+        "text": "Welcome to CreditChek's API documentation. These are the live APIs that can be used when integrating with CreditChek Infrastructure."
+    },
+    {
+        "section": "About CreditChek",
+        "text": "We are building a credit-worthy Africa! - Sign Up and give Underserved Africans a financially free life with convenience and confidence.\n We are helping lenders and post-paid services organisations reduce bad debts.\n Before you do Anything\nPlease sign Up to get started here - https://app.creditchek.africa/auth/signup \t CreditChek APIs are all RESTFul based and can be accessed or tested directly here with your API Check for **App Page** to see the default CreditChek App, and obtain your secured API credentials from the App page details. use the RESTFul API test tool or PostMan API tool to obtain validated API keys accordingly.\tLive URL https://api.creditchek.africa/v1 \nBoth Live & Test Keys when performing API Testing or customer App integration with this platform only accept encrypted values passed as header tokens.\nOur Authentication Endpoint performs real-time encryption, decryption, authentication, and validation on each API request from customers. We've grouped the CreditChek API Docs to help you easily find exactly what you need and guide you through the process of integration."
+    },
+    {
+        "section": "API Authentication",
+        "text": "You can login with your credentials into the Web Portal. Use the default **CreditChek** app API keys or create your preferred App with your details.\nAll CreditChek API Endpoint accepts your unique secured API public Key as a Header token. Only the RADAR Endpoint uses the same API Public Key as the **Bearer token**. You can manage your API keys from the dashboard.\nSample Header \ntoken: oCLkJivg2ol5P9iG39454OUYMvOgXT1XbAPmjF/1qyjDr8SwTssHcDpb4CI0iVSa\n Generally, we provide both public and secret keys. For Security reasons we went further ahead to encrypt your keys with the AES 256 bit encryption algorithm.\nIf for any reason you believe your keys has been compromised or you wish to reset them, you can do so from the dashboard. \n\n**Note:**\n- The API key should be kept secure and not shared with unauthorized users.\n- The API key should be passed as a header in the request.\n\n**Secure your keys**\nDo not commit your keys to git, or use them in client-side code.\nAPI requests made without authentication will fail with the status code 401: Unauthorized. All API requests must be made over HTTPS.\n\n**Secure your requests**\n-Do not set VERIFY_PEER to FALSE. Ensure your server verifies the SSL connection to CreditChek \nEnsure to check this boxes ✅ during your complete integration of our services.\nHappy building and integration...\nLove from CreditChek Team.."
+    },
+    {
+        "section": "Authentication - Sample Requests",
+        "text": "Both request body data and response data are formatted as JSON. Content type for responses will always be application/json. Generally, all responses will be in the following format:"
+    },
+    {
+        "section": "Authentication - Response format",
+        "success": true,
+        "message": "Request processed successfully.",
+        "data": {
+            "user_id": "12345",
+            "credit_score": 750,
+            "risk_level": "low",
+            "recommendation": "Eligible for loan"
+        },
+        "text": "While, it could be useful to use HTTP status codes to determine the result of an API call, we have provided a handy success key to let you know upfront if the request was successful or not.\nThe message key is a string which will contain a summary of the response and its status. For instance when trying to retrieve a list of customers, message might read “Customers retrieved”. In the event of an error, the message key will contain a description of the error as with the authorization header situation above. This is the only key that is universal across requests.\nThe data key is where you want to look for the result of your request. It can either be an object, or an array depending on the request made. For instance, a request to retrieve a single customer will return a customer object in the data key, while the key would be an array of customers if a list is requested instead."
+    },
+    {
+        "section": "Authentication - Wallets",
+        "method": "GET",
+        "url": "https://api.creditchek.africa/v1/wallet/",
+        "headers": {
+            "Authorization": "Bearer nAuuVJ2T2TokentNoOcqBpSf1TokenwIJyTSIFDTokenMchQXb44Token5GyKG"
+        },
+        "text": "You can get your wallet balance using the endpoint below. You're advised as well to set a wallet threshold limit so you can get notified via email whenever your balance goes below the set limit to avoid service disruption."
+    },
+    {
+        "section": "Authentication - Errors",
+        "text": "As stated earlier, CreditChek's API is RESTful and as such, uses conventional HTTP response codes to indicate the success or failure of requests.\nFor more enquries, please reach out us @ E-mail:\n**support@creditchek.africa**"
+    },
+    {
+        "section": "Webhooks",
+        "text": "CreditChek uses Webhooks to communicate updates on requests initiated with our API for you to kick off additional workflows based on these events. Due to credit bureau downtime or services that takes time for a response, CreditChek submits a POST request to the designated Webhook URL with updates about the transaction.\n\nYour endpoint should respond to webhooks as quickly as possible. To acknowledge receipt of a webhook, your endpoint must return a 2xx HTTP status code. This status code should only indicate receipt of the message, not an acknowledgement that it was successfully processed by your system. Any other information returned in the response headers or response body is ignored."
+    },
+    {
+        "section": "Webhooks - Security",
+        "text": "All Webhook requests are sent with a x-auth-signature header for verification. It should match the secret key pair of the app public key you used when initiating the request."
+    },
+    {
+        "section": "Webhooks - Nodejs Example",
+        "text": "const secret = process.env.CREDITCHEK_SECRET_KEY;\n\nfunction verifyWebhook(req, res, next) {\n  if (req.headers[\"x-auth-signature\"] !== secret) {\n    return res.status(401).json({\n      message: \"Unauthorized request.\"\n    });\n  }\n  next();\n}\n\nrouter.post(\"/webhook\", verifyWebhook, (req, res) => {\n  const webhook = req.body;\n  switch (webhook.event) {\n    case \"pdf_upload\":\n    // do something with webhook.data;\n    case \"borrower_onboarded\":\n    // do something with webhook.data;\n    case \"income_insight\": \n    // do something with webhook.data;\n    case \"income_transaction\":\n    // do something with webhook.data;\n    case \"credit_premium\":\n    // do something with webhook.data;\n    case \"credit_advanced\":\n      break;\n  }\n  return res.sendStatus(200);\n});"
+    },
+    {
+        "section": "Webhooks - Retries & Failure",
+        "text": "In a case where CreditChek was unable to reach the URL, all the webhooks will only be tried once. It's advisable that Webhook URLs respond with a status 200 OK, before carrying one with processing the data in it. To retry a failed webhook you can go to your dashboard audit logs to re-send a webhook."
+    },
+    {
+        "section": "Webhooks - Sample webhook format",
+        "text": "Sample Credit Webhook payload",
+        "event": "credit_premium",
+        "data": {
+            "score": {},
+            "bvn": 44550011223,
+            "name": "Ndaka Kadir Hassan",
+            "_id": "5fbcde8f8699984153e655a0",
+            "gender": "Male",
+            "dateOfBirth": "20/09/1994",
+            "address": "No 1, Chevron Drive, Lagos",
+            "phone": "0802",
+            "email": "hi@creditchek.africa",
+            "bureauStatus": {}
+        }
+    },
+    {
+        "section": "Webhooks - Sample webhook formats",
+        "text": "Sample Income Webhook payload",
+        "event": "pdf_upload",
+        "data": {
+            "success": true,
+            "pageCount": 14,
+            "accountName": "Test Jorm",
+            "accountNumber": "7160010613",
+            "accountType": "savings",
+            "bankName": "fidelity bank",
+            "bankCode": "070",
+            "pdfUrl": "https://res.creditchek-africa/image/pdfStatement/62877574ae22b03091_070_savings_fidelity%20bank.pdf",
+            "bvn": "22357999900",
+            "borrowerId": "64c8b66302ed6ac59be6fa44"
+        }
+    },
+    {
+        "section": "Credit Assessment SDK",
+        "text": "You can implement our secured Credit Assessment SDK using this documentation. This aims to allow businesses to run a check on their customers' loan history and background easily and faster."
+    },
+    {
+        "section": "Overview",
+        "text": "The Secured SDK Engine is a lightweight product that gives businesses access to a pool of CreditChek API services and a decision engine.\nThe Secured SDK Engine uses the same technology as our main application to allow your customers to carry out assessments. The customer assessments help you determine the decisions to make when they apply to your product. With our Secured SDK, you are able to customize the functionalities according to how you see fit for your business. The assessments carried out on this secured SDK includes:\n\nIdentity verification\n\nCredit Bereau History search\n\nIncome Assessments\n\nAutomated immediate credit decision outcome"
+    },
+    {
+        "section": "Sign up on the B2B app",
+        "text": "Before you do Anything\n\nPlease Sign Up to get started here\n - https://app.creditchek.africa/auth/signup\n\nThe first thing you need to do is to go to the B2B portal at https://app.creditchek.africa/auth/signup to create an account with CreditChek. After signing up, follow the process required to verify your account on the app using the verification code sent to you email used for account creation. After this is done, you can then login."
+    },
+    {
+        "section": "Set up your widget",
+        "text": "To setup your widget, you go to the home page and click on the button that says “Setup Widget”. A modal will pop up where you can setup your widget."
+    },
+    {
+        "section": "SetUp Parameters",
+        "text": "Simply navigate to our docummentation to see how your Parameters are been setup."
+    }
+
+]
